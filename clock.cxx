@@ -91,6 +91,7 @@
 //#define USE_LOCAL_GC		// Cache our own GC
 
 extern char* g_szApplication;		// Name of application
+extern char* g_szTimeZone;
 bool g_fQuit;
 extern int g_fAsDesktop;
 extern int g_fAsToolbar;
@@ -888,6 +889,12 @@ int do_clock (void)
   int y = 0;
   unsigned int dx = 100;
   unsigned int dy = 100;
+
+  if (g_szTimeZone) {
+    setenv("TZ",g_szTimeZone , 1);
+    tzset();
+  }
+
 
   {
     LDisplay display;

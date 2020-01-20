@@ -57,6 +57,7 @@ int g_fAsDock;
 int g_fOverrideRedirect;
 int g_showSecondHand = -1;	// -1 means use the resource or default to true
 char* g_szGeometry;
+char* g_szTimeZone = NULL;
 
 OPTION rgOptions[] =
 {
@@ -66,6 +67,7 @@ OPTION rgOptions[] =
   { "as-toolbar",	OptSetInt, &g_fAsToolbar			  },
   { "override-redirect", OptSetInt, &g_fOverrideRedirect		  },
   { "show-second-hand",	OptArg | OptSetInt, &g_showSecondHand		  },
+  { "tz",		    OptArg | OptSetString | OptAllDash, &g_szTimeZone },
   { "help",		0, NULL, do_usage				},
   { "h",		0, NULL, do_usage				},
 
@@ -102,6 +104,7 @@ int do_usage (OPTION*, const char*)
 "  --no-override	Suppress window manager control by\n"
 "                       inhibiting override-redirect\n"
 "  --show-second-hand=0|1 Hide or show the second hand.  Overrides resource.\n"
+"  --tz             Set the selected time zone\n"
 "  --version, -V        Display version and copyright\n"
 "  --help, -h           Usage message\n"
 /* "                   (*) Default option\n" */
