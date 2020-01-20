@@ -1,0 +1,9 @@
+# packageinfo
+
+package buici
+class software
+title "Attractive X-Windows Clock"
+keywords "clock, X-Windows, X11"
+description "The Buici clock is a simple implementation of an X-Windows\
+ clock.  It sports an attractive face with a second hand and well\
+ proportioned features."

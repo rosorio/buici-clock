@@ -1,0 +1,41 @@
+  =========
+  XO README	$Id: README,v 1.1 1997/10/18 04:57:31 elf Exp $
+  =========
+
+  by Marc Singer, elf@netcom.com
+  17 October 1997 (date of last revision)
+
+
+  1.  Introduction
+
+  This is a C++ class library I use to support a collection of
+  X-Windows applications.  I don't use the Xt and other like libraries
+  because they're bigger and much more complex that this one.  Also,
+  I'm working toward a device-independent user interface library so it
+  is easier to perform dialogs and handle varying screen dimensions.
+
+  1.1.  Copyright
+
+  The XO library is Copyright (C) 1997 by Marc Singer.  It is
+  free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version. 
+
+
+  1.2  Feedback and Bug Reports
+
+  Bug reports may be sent to the author at <elf@netcom.com>.  There is
+  a plan to incorporate some form of automatic bug report generation
+  within the application, but until that is available e-mail is
+  likely to produce the best response.  
+
+
+  1.3  Disclaimer
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details. 
+
+

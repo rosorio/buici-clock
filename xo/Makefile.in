@@ -1,0 +1,261 @@
+#							-*- Makefile -*-
+# Makefile.in
+#   $Id: Makefile.in,v 1.15 2006/01/17 19:48:14 elf Exp $
+#
+#  written by Marc Singer
+#  8 May 1996
+#
+#
+
+.PHONY: install clean all version revision patch
+
+#
+# --- Project specification
+#
+
+PACKAGE=xo
+TARGET=xo
+O_D=o/
+SRC_LIB= \
+ ldisplay.cxx lwindow.cxx lfont.cxx \
+ wbutton.cxx wtext.cxx wdialog.cxx \
+ lhash.cxx larray.cxx \
+ res.cxx  dither.cxx lpicture.cxx
+
+#dmalloc.cxx
+
+_SRC=$(SRC_LIB) \
+ loupe.cxx stats.cxx
+# classes.cxx main.cxx
+
+DEPS:=$(SRC)
+DEPS:=$(DEPS:%.c=%.d)
+DEPS:=$(DEPS:%.cc=%.d)
+DEPS:=$(DEPS:%.cxx=%.d)
+
+SRC= $(_SRC) res_l.cxx res_y.cxx
+
+# lwindowclass.cxx
+# options.cxx version.cxx
+# system.cxx video.cxx timebase.cxx
+# lfile.cxx lstream.cxx lring.cxx lthread.cxx thread.s
+# report.cxx
+
+____OBJ=$(SRC:.c=.o)
+___OBJ=$(____OBJ:.cxx=.o)
+__OBJ=$(___OBJ:.s=.o)
+_OBJ=$(__OBJ:.l=.o)
+OBJ=$(_OBJ:.y=.o)
+
+____OBJ_LIB=$(SRC_LIB:.c=.o)
+___OBJ_LIB=$(____OBJ_LIB:.cxx=.o)
+__OBJ_LIB=$(___OBJ_LIB:.s=.o)
+_OBJ_LIB=$(__OBJ_LIB:.l=.o)
+OBJ_LIB=$(_OBJ_LIB:.y=.o)
+
+VERSION_HEADER=version.h
+
+CC=@CXX@
+CXXFLAGS=@CXXFLAGS@
+#CXXFLAGS=-${CXXFLAGS} -O
+#CXXFLAGS=-${CXXFLAGS} -O2
+#CXXFLAGS=-${CXXFLAGS} -fomit-frame-pointer
+CXXFLAGS_=-g @CFLAGS_W@@X_CFLAGS@
+LFLAGS=-g @LDFLAGS@@X_LIBS@@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@
+FLEX=@LEX@
+YACC=@YACC@
+
+#
+# --- Autoconf generated symbols
+#
+
+#srcdir = @srcdir@
+#VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+infodir = @infodir@
+mandir = @mandir@
+
+#
+# --- Implicit rules
+#
+
+vpath %.o $(O_D)
+
+%.o: %.cxx
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
+
+$(O_D)%.o: %.cxx
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
+
+%.o: %.s
+	$(ECHO) $(AS) $(AFLAGS) -o $(O_D)$@ $<
+	@$(AS) $(AFLAGS) $(AFLAGS_) -o $(O_D)$@ $<
+
+$(O_D)%.o: %.s
+	$(ECHO) $(AS) $(AFLAGS) -o $@ $<
+	@$(AS) $(AFLAGS) $(AFLAGS_) -o $@ $<
+
+%.cxx: %.l
+	$(FLEX) -o$@ $<
+
+%.cxx: %.y
+	$(YACC) -d -o $@ $<
+	mv $(basename $@).hxx $(basename $@).h
+
+%.i: %.cxx
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -E -o $(notdir $@) $<
+
+%.s: %.cxx
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -S -o $@ $<
+
+%.s: %.c
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -S -o $@ $<
+
+#
+# --- Primary targets
+#
+
+all: make_o _version.h res_y.cxx $(O_D)$(TARGET) libxo.a
+
+.PHONY: make_o
+make_o:
+	@if test ! -e $(O_D) ;\
+	 then echo === Creating \'$(O_D)\' output directory ; mkdir $(O_D) ; fi
+
+res_l.cxx: res_l.l
+res_y.cxx: res_y.y
+
+$(O_D)res.o: lres.h
+
+res: o/res_y.o o/res_l.o o/res.o
+	$(CC) $(LFLAGS) -o $@ $^
+
+libxo.a: $(OBJ_LIB)
+	ar rc libxo.a $(addprefix $(O_D),$(OBJ_LIB))
+
+$(O_D)$(TARGET): $(OBJ)
+	$(CC) -o $@ $(addprefix $(O_D),$(OBJ)) $(LFLAGS)
+
+#install:
+#	cp $(TARGET).exe c:/usr/local
+
+.PHONY: count
+count:
+	wc $(_SRC) *.h
+
+clean:
+ifneq "$(O_D)" ""
+	-rm -rf $(O_D)
+else
+	-rm $(OBJ)
+endif
+	-rm *.i
+
+.PHONY: dist_clean
+distclean: clean
+	@-rm -f \#* *~ *.sed *.i *.cod
+	-chmod +w Makefile config.h
+	-rm Makefile config.h $(DEPEND)
+	-rm config.cache config.status config.log
+	-rm _version.h .version
+	-rm res_y.h res_l.cxx res_y.cxx
+	-rm libxo.a
+
+res_l.l: res.h
+res_y.y: res.h
+
+#
+# Version and Build Engineering
+#
+
+.version: .version_major .version_minor .version_patch
+	@/bin/echo -n `cat .version_major`.`cat .version_minor`.`cat \
+		.version_patch`  > .version
+
+_version.h: .version
+	@/bin/echo -e \#define SZ_VERSION \"`cat .version`\"  > _version.h
+
+.PHONY: transmit
+transmit: # distribution-archive
+
+	@/bin/sh -c "cd .. ;\
+	 distftp.sh ${PACKAGE} ${PACKAGE}-`cat .version`.tar.gz"
+	@distftp.sh ${PACKAGE} ANNOUNCEMENT
+	@distftp.sh ${PACKAGE} README
+	@distftp.sh ${PACKAGE} ${PACKAGE}-`cat .version`.lsm
+
+lsm.sed: _version.h
+	@echo Creating LSM edit script...
+	@/bin/echo s/\<\<version\>\>/`cat .version`/ > lsm.sed
+	@/bin/echo s/\<\<date\>\>/`date +"%d %B %Y"`/ >> lsm.sed
+	@/bin/echo s/\<\<tar-file\>\>/${PACKAGE}-`cat .version`.tar.gz/ \
+	 >> lsm.sed
+	@/bin/echo s/\<\<lsm-file\>\>/${PACKAGE}-`cat .version`.lsm/ >> lsm.sed
+
+.PHONY: ${PACKAGE}.lsm
+${PACKAGE}.lsm: lsm.sed LSM
+	@echo Creating LSM file...
+	@-rm *.lsm
+	@sed -f lsm.sed LSM > ${PACKAGE}-`cat .version`.lsm
+
+.PHONY: distribution-archive da
+distribution-archive da: ${PACKAGE}.lsm dist_clean
+	@echo Creating distribution archive...
+	@/bin/sh -c "if test -x ../${PACKAGE}-`cat .version`;\
+		then rm ../${PACKAGE}-`cat .version` ; fi"
+	@ln -s ${PACKAGE} ../${PACKAGE}-`cat .version`
+	@find . -path CVS -prune\
+		-o -path o -prune\
+		-o -regex .\*/${PACKAGE} -prune\
+		-o -regex .\*/configure -prune\
+		-o -regex .\*/config.status -prune\
+		-o -regex .\*\.o -prune\
+		-o -type f -exec chmod 644 \{\} \;
+	@/bin/sh -c 'cd .. ; V=`cat ${PACKAGE}/.version` ;\
+		tar zcf ${PACKAGE}-$$V.tar.gz\
+		`find ${PACKAGE}-$$V/\
+		 -regex .\*/CVS -prune\
+		 -o -regex .\*~ -prune\
+		 -o -regex .\*/o -prune\
+		 -o -regex .\*/res -prune\
+		 -o -regex .\*\\\\.o -prune\
+		 -o -regex .\*\\\\.a -prune\
+		 -o -regex .\*\\\\.m -prune\
+		 -o -regex .\*\\\\.bmp -prune\
+		 -o -regex .\*/${PACKAGE} -prune\
+		 -o -regex .\*/Makefile -prune\
+		 -o -regex .\*/config.cache -prune\
+		 -o -regex .\*/config.h -prune\
+		 -o -regex .\*/config.log -prune\
+		 -o -regex .\*/config.status -prune\
+		 -o -regex .\*/configure.scan -prune\
+		 -o -regex .\*/log -prune\
+		 -o -regex .\*/gmon.out -prune\
+		 -o -regex .\*/\.cvsignore -prune\
+		 -o -regex .\*/\.gdbinit -prune\
+		 -o -regex .\*/NOTES -prune\
+		 -o -regex .\*/patches -prune\
+		 -o -type f -print | sort`'
+	@-rm ../${PACKAGE}-`cat .version`
+
+#
+# --- Dependencies: depend.m
+#
+
+%.d: %.c
+	@set -e; rm -f $@; \
+	  $(CC) -M $(CFLAGS) $< > $@.$$$$; \
+	  sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	  rm -f $@.$$$$
+
+%.d: %.cc
+	@set -e; rm -f $@; \
+	  $(CXX) -MM $(CFLAGS) $< > $@.$$$$; \
+	  sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	  rm -f $@.$$$$
+
+-include $(DEPS)

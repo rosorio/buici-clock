@@ -1,0 +1,330 @@
+#							-*- Makefile -*-
+# Makefile.in
+#   $Id: Makefile.in,v 1.32 2006/01/18 03:41:01 elf Exp $
+#
+#  written by Marc Singer
+#  11 October 1997
+#
+#  This file is part of the project Buici.  See the file README for
+#  more information.
+#
+#  Copyright (C) 1997 Marc Singer
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the
+#  License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  in a file called COPYING along with this program; if not, write to
+#  the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
+#  02139, USA.
+#
+#
+
+.PHONY: install clean all version revision patch
+
+
+#
+# --- Project specification
+#
+
+TARGET=buici-clock
+PACKAGE=buici-clock
+O_D=o/
+SRC= \
+ main.cxx options.cxx version.cxx \
+ clock.cxx signal.cxx draw.cc
+
+# system.cxx video.cxx timebase.cxx renderx.cxx
+# lfile.cxx lstream.cxx lring.cxx lthread.cxx thread.s
+# report.cxx stats.cxx
+# dct.cxx
+
+OBJ:=$(SRC)
+OBJ:=$(OBJ:.c=.o)
+OBJ:=$(OBJ:.cxx=.o)
+OBJ:=$(OBJ:.cc=.o)
+OBJ:=$(OBJ:.s=.o)
+
+VERSION_HEADER=version.h
+RELEASE_PATH=${HOME}/release
+
+XO_PATH=@XO_PATH@
+CC=@CXX@
+CFLAGS_I=-I${XO_PATH} `pkg-config --cflags cairo`
+CXXFLAGS=@CXXFLAGS@
+#CXXFLAGS=$(CXXFLAGS) -O
+#CXXFLAGS=$(CXXFLAGS) -O2
+#CXXFLAGS=$(CXXFLAGS) -fomit-frame-pointer
+#CXXFLAGS=$(CXXFLAGS) -pg
+
+CXXFLAGS_=-g $(CFLAGS_I)@CFLAGS_W@@X_CFLAGS@
+LFLAGS=-g @LDFLAGS@@X_LIBS@ -L${XO_PATH} @LIBS@ -lxo -lX11 -lXext@X_EXTRA_LIBS@ `pkg-config --libs cairo`
+#LFLAGS=-pg ${LFLAGS}
+DEPEND=depend.m
+ECHO=@/bin/echo
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_DATA=@INSTALL_DATA@
+
+#
+# --- Autoconf generated symbols
+#
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+docdir = $(prefix)/share/doc/$(PACKAGE)
+infodir = @infodir@
+mandir = $(prefix)/share/man
+
+
+# This is removed because it generates a line in the Makefile.in that
+# breaks the use of 'make -f Makefile.in distclean' from
+# debian/rules.  We do call make on subdirectories, so this may be a
+# problem.
+# @SET_MAKE@
+
+#
+# --- Implicit rules
+#
+
+vpath %.o $(O_D)
+
+%.o: %.cc
+	$(make_o)
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
+
+%.o: %.cxx
+	$(make_o)
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
+
+$(O_D)%.o: %.cxx
+	$(make_o)
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
+
+$(O_D)%.o: %.cc
+	$(make_o)
+	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
+	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
+
+%.o: %.s
+	$(make_o)
+	$(ECHO) $(AS) $(AFLAGS) -o $(O_D)$@ $<
+	@$(AS) $(AFLAGS) $(AFLAGS_) -o $(O_D)$@ $<
+
+$(O_D)%.o: %.s
+	$(make_o)
+	$(ECHO) $(AS) $(AFLAGS) -o $@ $<
+	@$(AS) $(AFLAGS) $(AFLAGS_) -o $@ $<
+
+%.i: %.cxx
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -E -o $(notdir $@) $<
+
+%.s: %.cxx
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -S -o $@ $<
+
+%.i: %.cc
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -E -o $(notdir $@) $<
+
+%.s: %.cc
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -S -o $@ $<
+
+%.s: %.c
+	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -S -o $@ $<
+
+#
+# --- Primary targets
+#
+
+all: check_depend make_o _version.h xolib $(O_D)$(TARGET) $(TARGET) $(PACKAGE).README
+
+.PHONY: make_o
+make_o:
+	@if test ! -e $(O_D) ;\
+	 then echo === Creating \'$(O_D)\' output directory ; mkdir $(O_D) ; fi
+
+xolib:
+	@if test ! "${XO_PATH}" = "../xo" ; \
+	 then (cd ${XO_PATH} ; [ -f config.log ] || ./configure ; $(MAKE) all) ; fi
+
+$(O_D)$(TARGET): $(OBJ) $(XO_PATH)/libxo.a
+	$(CC) -o $@ $(addprefix $(O_D),$(OBJ)) $(LFLAGS)
+
+$(TARGET): $(O_D)$(TARGET)
+	@echo -- Linking $(TARGET) to $(O_D)$(TARGET)
+	@ln -s $(O_D)$(TARGET) .
+
+#install:
+#	cp $(TARGET).exe c:/usr/local
+
+clean:
+ifneq "$(O_D)" ""
+	-rm -rf $(O_D)
+else
+	-rm $(OBJ)
+endif
+	-rm *.i
+	@if test ! "${XO_PATH}" = "../xo" ; \
+	 then $(MAKE) -C ${XO_PATH} clean ; fi
+
+.PHONY: debclean
+debclean: distclean
+
+.PHONY: distclean dist_clean
+distclean dist_clean: clean
+	-rm -f \#* *~ *.sed *.i *.cod
+	-rm -f config.cache config.status config.log
+	-chmod +w Makefile config.h
+	-rm Makefile config.h $(DEPEND)
+	-rm _version.h .version
+#	-rm build
+	@if test ! "${XO_PATH}" = "../xo" ; \
+	 then $(MAKE) -C ${XO_PATH} distclean ; fi
+
+#
+# --- Version and Build Engineering
+#
+
+.version: .version_major .version_minor .version_patch
+	@/bin/echo -n `cat .version_major`.`cat .version_minor`.`cat \
+		.version_patch`  > .version
+
+_version.h: .version
+	@/bin/echo -e \#define SZ_VERSION \"`cat .version`\"  > _version.h
+
+.PHONY: transmit
+transmit: # distribution-archive
+
+	@/bin/sh -c "cd .. ;\
+	 distftp.sh ${PACKAGE} ${PACKAGE}-`cat .version`.tar.gz"
+	@distftp.sh ${PACKAGE} ANNOUNCEMENT
+	@distftp.sh ${PACKAGE} README
+	@distftp.sh ${PACKAGE} ${PACKAGE}-`cat .version`.lsm
+
+version.sed: _version.h
+	@echo Creating version-specific sed script...
+	@/bin/echo s/\<\<version\>\>/`cat .version`/ > version.sed
+	@/bin/echo s/\<\<date\>\>/`date +"%d %B %Y"`/ >> version.sed
+	@/bin/echo s/\<\<tar-file\>\>/${PACKAGE}-`cat .version`.tar.gz/ \
+	 >> version.sed
+	@/bin/echo s/\<\<lsm-file\>\>/${PACKAGE}-`cat .version`.lsm/ >> version.sed
+
+.PHONY: ${PACKAGE}.lsm
+${PACKAGE}.lsm: version.sed LSM
+	@echo Creating LSM file...
+	@if test -f *.lsm ; then rm *.lsm ; fi
+	@sed -f version.sed LSM > ${PACKAGE}-`cat .version`.lsm
+
+.PHONY: ${PACKAGE}.ANNOUNCEMENT
+${PACKAGE}.ANNOUNCEMENT: version.sed ANNOUNCEMENT
+	@echo Creating ANNOUNCEMENT file...
+	@if test -f *.ANNOUNCEMENT ; then rm *.ANNOUNCEMENT ; fi
+	@sed -f version.sed ANNOUNCEMENT \
+	   > ${PACKAGE}-`cat .version`.ANNOUNCEMENT
+	@cat ${PACKAGE}-`cat .version`.lsm \
+	  >> ${PACKAGE}-`cat .version`.ANNOUNCEMENT
+
+.PHONY: ${PACKAGE}.README
+${PACKAGE}.README: version.sed README
+	@echo Creating README file...
+	@if test -f *.README ; then rm *.README ; fi
+	@sed -f version.sed README  > ${PACKAGE}-`cat .version`.README
+
+.PHONY: distribution-archive da
+distribution-archive da: ${PACKAGE}.lsm ${PACKAGE}.ANNOUNCEMENT ${PACKAGE}.README dist_clean
+	@echo Creating distribution archive...
+	@/bin/sh -c "if test -x ../${PACKAGE}-`cat .version`;\
+		then rm ../${PACKAGE}-`cat .version` ; fi"
+	@ln -s ${PACKAGE} ../${PACKAGE}-`cat .version`
+	@find . -path CVS -prune\
+		-o -path o -prune\
+		-o -regex .\*/${PACKAGE} -prune\
+		-o -regex .\*/configure -prune\
+		-o -regex .\*/config.status -prune\
+		-o -regex .\*\.o -prune\
+		-o -type f -exec chmod 644 \{\} \;
+	@/bin/sh -c 'cd .. ; V=`cat ${PACKAGE}/.version` ;\
+		tar zcf ${PACKAGE}-$$V.tar.gz\
+		`find ${PACKAGE}-$$V/\
+		 -regex .\*/CVS -prune\
+		 -o -regex .\*~ -prune\
+		 -o -regex .\*/o -prune\
+		 -o -regex .\*\\\\.o -prune\
+		 -o -regex .\*\\\\.a -prune\
+		 -o -regex .\*\\\\.m -prune\
+		 -o -regex .\*\\\\.bmp -prune\
+		 -o -regex .\*/${PACKAGE} -prune\
+		 -o -regex .\*/Makefile -prune\
+		 -o -regex .\*/config.cache -prune\
+		 -o -regex .\*/config.h -prune\
+		 -o -regex .\*/config.log -prune\
+		 -o -regex .\*/config.status -prune\
+		 -o -regex .\*/configure.scan -prune\
+		 -o -regex .\*/log -prune\
+		 -o -regex .\*/gmon.out -prune\
+		 -o -regex .\*/\.cvsignore -prune\
+		 -o -regex .\*/\.gdbinit -prune\
+		 -o -regex .\*/NOTES -prune\
+		 -o -regex .\*/patches -prune\
+		 -o -regex .\*/buici-.\* -prune\
+		 -o -type f -print | sort`'
+	@-rm ../${PACKAGE}-`cat .version`
+	@echo Moving distribution file to ${RELEASE_PATH}...
+	@mv ../${PACKAGE}-`cat .version`.tar.gz ${RELEASE_PATH}
+	@mv ${PACKAGE}-`cat .version`.* ${RELEASE_PATH}
+
+#
+# --- Installation
+#
+
+.PHONY: install installdirs
+
+install: installdirs $(TARGET)
+# hello.info
+	$(INSTALL_PROGRAM) $(TARGET) $(DESTDIR)$(bindir)/$(binprefix)
+#	strip $(bindir)/$(binprefix)/$(TARGET)
+#	-$(INSTALL_DATA) options $(docdir)
+	$(INSTALL_DATA) $(TARGET).1 $(DESTDIR)$(mandir)/man1
+#	$(INSTALL_DATA) curves.5 $(mandir)/man5
+	$(INSTALL_DATA) ${PACKAGE}-`cat .version`.README $(DESTDIR)$(docdir)/README
+installdirs:
+	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(docdir)
+#$(docdir)
+#$(mandir)/man5
+#$(infodir)
+
+#
+# --- Dependencies: depend.m
+#
+
+.PHONY: depend check_depend
+
+# *** removed _version.h to prevent forced dependency build
+depend: $(DEPEND) # _version.h
+$(DEPEND) depend: # _version.h $(SRC)
+	$(CC) $(CFLAGS_I) -M $(SRC) > $(DEPEND)
+
+check_depend:
+	@if test ! -s ${DEPEND} ; then \
+	 echo "-- Use 'make depend' to create dependencies file." \
+	      "  Continuing without it." ; fi
+
+#
+# --- Include dependencies always.  Configure creates an empty file
+#
+ifneq "$(wildcard depend.m)" ""
+include ${DEPEND}
+endif

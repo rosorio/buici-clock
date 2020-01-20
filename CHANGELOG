@@ -1,0 +1,18 @@
+  =====================
+  Buici Clock CHANGELOG	$Id: CHANGELOG,v 1.1 1997/10/23 07:04:29 elf Exp $
+  =====================
+
+  0.3.4  22 October 97
+   o Added ICCCM properties so that clock cooperates with window
+     managers. 
+   o Posted public release.
+
+  0.3.3  20 October 97
+   o Fixed parsing of geometry to recognize negative offsets.
+   o Changed algorithm for time calculation in order to universalize
+     time-zones and daylight savings time.
+   o Added a work-around for what appears to be X servers without
+     resource properties.
+
+  0.3.2  18 October 97
+   o Posted public release.

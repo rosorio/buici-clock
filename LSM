@@ -1,0 +1,14 @@
+Begin3
+Title:          Buici Clock <<version>> - Attractive X-Windows Clock
+Version:	<<version>>
+Entered-date:	<<date>>
+Description:    Xlib implementation of an attractive, configurable clock.
+Keywords:       X-Windows X X11 clock time
+Author:         elf@netcom.com (Marc Singer)
+Maintained-by:  elf@netcom.com (Marc Singer)
+Primary-site:   thumper.moretechnology.com /pub/distrib
+		<<tar-file>>
+		<<lsm-file>>
+Platform:       C++ to build from source.  X-Windows.
+Copying-policy: GNU GPL
+End

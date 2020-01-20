@@ -1,0 +1,13 @@
+Source: buici-clock
+Section: x11
+Priority: optional
+Maintainer: Marc Singer <elf@debian.org>
+Standards-Version: 3.9.8
+Build-Depends: debhelper (>= 7), bison, flex, libx11-dev, libxext-dev, pkg-config, libcairo2-dev
+
+Package: buici-clock
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: attractive desktop clock
+ As clocks go, Buici satisfies the basic need of representing the
+ time accurately and attractively.  It has limited configurability.

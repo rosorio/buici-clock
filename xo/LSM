@@ -1,0 +1,14 @@
+Begin3
+Title:          XO <<version>> - X-Windows Class Library
+Version:	<<version>>
+Entered-date:	<<date>>
+Description:    Class libraries for interfacing to X-Windows.
+Keywords:       X-Windows X windows X11 class library
+Author:         elf@netcom.com (Marc Singer)
+Maintained-by:  elf@netcom.com (Marc Singer)
+Primary-site:   thumper.moretechnology.com /pub/distrib
+		<<tar-file>>
+		<<lsm-file>>
+Platform:       C++ to build from source.  X-Windows.
+Copying-policy: GNU GPL
+End

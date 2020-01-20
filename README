@@ -1,0 +1,123 @@
+  ==================
+  Buici-Clock README	$Id: README,v 1.8 2001/10/31 04:55:54 elf Exp $
+  ==================
+  version <<version>> of <<date>>
+
+  by Marc Singer, elf@netcom.com
+  30 October 2001 (date of last revision)
+
+  This document explains how to compile and configure the Buici clock.
+  It also contains the release notes. 
+
+
+  1.  Introduction
+
+  I would have used another clock if I could find one.  I found none.
+  The best available was swissclock-0.6, but it fails to draw a round
+  face on my X servers.
+
+  This release is somewhat limited.  It keeps time and has an
+  attractive face that displays almost correctly.  There will be a
+  couple of updates to add configurability and a date feature.
+
+
+  1.1.  Copyright
+
+  The Buici Clock program is Copyright (C) 1997 by Marc Singer.  It is
+  free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version. 
+
+
+  1.2  The most current release of the Buici-Clock
+
+  This packages is included in the Debian releases.  If your system
+  has access to the Debian archives, the following command will
+  install the latest version.
+
+    apt-get install buici-clock
+
+  Otherwise, it is available from the source.
+
+    <URL:ftp://ftp.buici.com/pub/buici-clock>
+
+
+  1.4  Feedback and Bug Reports
+
+  Bug reports may be sent to the author at <elf@debian.org>.  There is
+  a plan to incorporate some form of automatic bug report generation
+  within the application, but until that is available e-mail is
+  likely to produce the best response.  
+
+
+  1.5  Disclaimer
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details. 
+
+
+  2.0  Building the Buici-Clock from Source
+
+  After unpacking the source archive, you will have a version numbered
+  directory buici-clock-X.Y.Z.  In this directory is an autoconfig script.
+  This, building the program requires two steps.
+
+    configure
+
+  This script will evaluate your system and configure the directory
+  for building.
+
+    make
+
+  This command will compile the application and put a link to it in
+  the source directory.  The program is called buici-clock.
+
+
+  3.0  Using the Buici-Clock
+
+  This version accepts only one standard X toolkit option, -geometry.
+  The most straighforward way to start the clock is to run a command
+  such as this:
+
+    ./buici-clock -geometry =100x100-4-4
+
+
+  3.1  Borderless Clock
+
+  There is a command line option to suppress the window manager's
+  ornaments.
+
+    ./buici-clock --no-ornaments
+
+  4.0  Release Notes
+
+  It has been a long time since the first release of this program.  I
+  believe there are some lingering problems, but none have been
+  reported.
+
+  If you experience problems, I appreciate an e-mail to elf@buici.com
+  with a description of the problem and the output of the shell script
+  info.sh.
+
+  4.1  Timezones
+
+  The computation I use to display the time is incompatible with
+  conventional C library calls that convert the system clock time to
+  local time.  The result is an algorithm that I believe is correct,
+  but I cannot verify in all time zones.  If anyone's buici clock fails
+  to report the same time as the system "date" command please let me
+  know.  
+
+  4.2  X Server Resources
+
+  There have been reports of crashes on some GNU/Linux machines, the
+  same platform on which I develop.  One person tracked the trouble to
+  the ResourceManager database.  This release includes a work-around,
+  but I want to discover the cause of this anomoly.
+
+  The configure script will test for what-I-believe-is-the-problem.
+  If it displays a message about a suspicious X server, please send me
+  the output of the info.sh Bourne shell script

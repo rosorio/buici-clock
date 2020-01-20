@@ -1,0 +1,52 @@
+/* sample.dlg
+
+   Dialog template file.
+
+*/
+
+bitmap (1) {
+  file ("mybitmap.pnm")
+}
+
+menu (1) {
+  item (1) { title ("open") }
+  item (2) { title ("close") }
+}
+
+dialog (1) {
+  origin (100, 100)
+  extent (26, 4.5)
+  title ("Sample Dialog")
+  pushbutton (1) {
+    title ("Quit")
+    origin (1, 0.5)
+    extent (7, 1.5)
+    highlight
+  }
+  pushbutton (2) {
+    title ("Don't Press")
+    origin (12, 0.5)
+    extent (13, 1.5)    
+  }
+  textedit (3) {
+    origin (1,  2.5)
+    extent (24, 1.5)
+    text ("There's nothing like the real thing")
+  }
+}
+
+dialog (2) {
+  title ("File Open")
+  pushbutton (1) {
+    title ("Open")
+    origin (2, 2)
+    extent (8, 1.5)
+    highlight
+  }
+  pushbutton (2) {
+    title ("Cancel")
+    origin (12, 2)
+    extent (15, 1.5)    
+  }
+}
+

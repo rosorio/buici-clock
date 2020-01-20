@@ -1,0 +1,32 @@
+2003-02-12  Marc Singer  <elf@buici.com>
+
+	* debian/control (Build-Depends): Reordered dependencies to make
+	xlibs-dev the default xlibs library.
+
+	* Makefile.in: Configuring explicitly in the current directory.
+	Applied suggested patch to xo/Makefile.in.
+
+1998-10-26  Marc Singer  <elf@netcom.com>
+
+	* clock.cxx (do_clock): The second-hand resource code was dumping
+	on some users.  I changed the code path to explicitly check return
+	values and avoid references uninitialized stack variables. 
+
+1998-10-21  Marc Singer  <elf@netcom.netcom.com>
+
+	* buici-clock.1: Documented resource to enable/disable the second
+	hand.
+	
+	* clock.cxx (do_clock): Added check for resource to enable/disable
+	second hand.
+
+1998-10-15  Marc Singer  <elf@netcom.netcom.com>
+
+	* Fixed a large batch of compiler warnings and errors in the
+	makefiles that prevented smooth builds from untarred source.
+
+1998-10-13  Marc Singer  <elf@netcom.netcom.com>
+
+	* Making first debianized version available.
+	
+

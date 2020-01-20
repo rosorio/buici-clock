@@ -1,0 +1,27 @@
+
+Version <<version>> of the Buici clock
+
+An attractive clock for X-Windows that uses nothing besides the
+Consortiums Xlib and Xext. 
+
+  <URL:www://thumper.moretechnology.com/distrib>
+  <URL:ftp://thumper.moretechnology.com/pub/distrib>
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The best clock on the Internet that I found didn't look good enough.
+I designed (am designing) Buici to be attractive, configurable, and
+easy to use.
+
+This release patches a couple of bugs, adds support for window manager
+communication (ICCCM), and improves geometry parsing.  If this one
+encounters no crash bugs, I'll be adding configurability from a
+dialog.  Yep, there's a dialog manager in there somewhere.
+
+Please check the release notes in the README for information on the
+problems I working to erradicate.  If you have any difficulties please
+send me e-mail with a description of the problem andx the output of the
+info.sh script.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+

@@ -1,0 +1,6 @@
+?package(buici-clock):\
+  needs="X11"\
+  section="Games/Toys"\
+  hints="Clocks"\
+  title="buici clock"\
+  command="buici-clock"               

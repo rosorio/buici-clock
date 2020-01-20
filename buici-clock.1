@@ -1,0 +1,50 @@
+.TH buici-clock 1 21-October-1998 "Debian GNU/Linux"
+.SH NAME
+buici-clock \- attractive X11 clock
+.SH SYNOPSIS
+.B buici-clock
+[
+.B \-geometry
+geometry
+]
+
+.SH DESCRIPTION
+
+\fBbuici-clock\fR displays an attractive, analog, X11 clock.  Among
+the many digital clocks and analog clocks with peculiar display
+artifacts, \fBbuici-clock\fR intends to stand out as a stylish,
+low-overhead clock.
+
+.SH OPTIONS
+
+.TP
+.I "\-geometry geometry"
+This standard X11 options specifies the position and size of the
+clock; see 
+.IR X (1).
+
+.SH USAGE
+
+What's to say.  This release of \fBbuici-clock\fR offers no
+customizable features.  It has a white clock face, black markers, a
+black border, and a red second hand with a circular pointer.  The
+minute and hour hands are black and rectangular.  Some may recognize
+the form from Swiss railway clocks.
+
+.SH RESOURCES
+
+Because this program doesn't use a toolkit, it recognizes only the
+resources specified here.
+.\".in +1in
+.TP 8
+.B "showSecondHand"
+Is a boolean indicating whether or not the second hand will display.
+Note that in the current version of \fBbuici-clock\fR, disabling the
+second hand does not prevent an update of the clock face every
+second. 
+
+.SH AUTHOR
+Marc Singer <elf@debian.org>
+
+.SH "SEE ALSO"
+.IR X (1)

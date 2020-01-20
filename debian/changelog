@@ -1,0 +1,195 @@
+buici-clock (0.4.9.4) unstable; urgency=medium
+
+  * Fixed source archive package build.  (Closes: #832295)
+  * Resolves some lintian issues.
+
+ -- Marc Singer <elf@debian.org>  Sat, 23 Jul 2016 17:25:31 -0700
+
+buici-clock (0.4.9.3) unstable; urgency=low
+
+  * Fixed type conversion error in XBM file for C++11 and GCC-6. (Closes:
+    #811782)
+
+ -- Marc Singer <elf@debian.org>  Wed, 13 Jul 2016 23:05:35 -0700
+
+buici-clock (0.4.9.2) unstable; urgency=low
+
+  * Added pkg-config and libcairo to build dependencies.  Unclear how it
+    ever built at all.
+  * Changed menu to conform to recommended section for clocks. (Closes: #496094)
+  * Verified that these NMUs are either incorporated or adequately covered
+    by other changes to the package.  (Closes: #392675, #392821)
+
+ -- Marc Singer <elf@buici.com>  Mon, 25 Jul 2011 19:38:19 +0000
+
+buici-clock (0.4.9.1) unstable; urgency=low
+
+  * Reordered link line for libxo.a s.t. libraries succeed
+    objects. (Closes: # 634730)
+  * Upgraded debian rules and compatibility.    
+  * Removed libSM and libICE from link as no symbols from libraries were
+    used.  Also removed from build dependencies.
+  * Restored support for complete source archive on upload. (Closes: #635240)
+  
+ -- Marc Singer <elf@buici.com>  Mon, 25 Jul 2011 11:29:38 +0000
+
+buici-clock (0.4.8) unstable; urgency=low
+
+  * Revised Joey's changes to the build as to better clean up all
+    build transients.
+  * Removed decoration from the main clock window on use of a
+    command-line switch.
+  * Fixed an error in the application name parser.
+  * Added command line switch to enable/disable the second hand.
+
+ -- Marc Singer <elf@buici.com>  Sat, 23 Dec 2006 18:44:23 -0800
+
+buici-clock (0.4.6.0.1) unstable; urgency=low
+    
+  * NMU
+  * Version number munge to let this NMU have a higher version number than the
+    0.4.6+b1 hppa bin-nmu in testing.
+
+ -- Joey Hess <joeyh@debian.org>  Fri, 13 Oct 2006 20:33:48 -0400
+
+buici-clock (0.4.6-0.2) unstable; urgency=low
+
+  * NMU
+  * Improve clean target slightly, to remove xo/libxo.a. Closes: #392734
+    Also other generated files in xo/.
+
+ -- Joey Hess <joeyh@debian.org>  Fri, 13 Oct 2006 13:56:49 -0400
+
+buici-clock (0.4.6-0.1) unstable; urgency=low
+    
+  * NMU
+  * Fix location of man page. Closes: #391695
+  * Remove incorrect hardcoded path to program in menu file.
+  * Add missing quotes in menu file.
+  * Add a call to dh_clean in rules file. Still doesn't clean entirely
+    correctly.
+    
+ -- Joey Hess <joeyh@debian.org>  Thu, 12 Oct 2006 15:41:01 -0400
+    
+buici-clock (0.4.6) unstable; urgency=low
+
+  * Moved the executable from /usr/X11R6 to /usr.
+
+ -- Marc Singer <elf@buici.com>  Mon, 17 Apr 2006 08:23:19 -0700
+
+buici-clock (0.4.5) unstable; urgency=low
+
+  * Autoconf fix required unstable version of autoconf.  This update also
+    fixes:
+  * Updating the control file.  Removing xlibs-dev dependency.
+  * Updated the configure script to fix an error in the way that older
+    autoconf's searched for X libraries and header.
+  * Added SM and ICE libraries to the list of build-depends, libraries
+    that the whiz-bang script missed.
+
+ -- Marc Singer <elf@buici.com>  Tue, 17 Jan 2006 11:54:59 -0800
+
+buici-clock (0.4.4) unstable; urgency=low
+
+  * Rolled revision to propagate configure script change as well as:
+  * Updating the control file.  Removing xlibs-dev dependency.
+  * Updated the configure script to fix an error in the way that older
+    autoconf's searched for X libraries and header.
+
+ -- Marc Singer <elf@buici.com>  Mon, 16 Jan 2006 15:02:49 -0800
+
+buici-clock (0.4.3) unstable; urgency=low
+
+  * Updating the control file.  Removing xlibs-dev dependency.
+  * Updated the configure script to fix an error in the way that older
+    autoconf's searched for X libraries and header.
+
+ -- Marc Singer <elf@buici.com>  Mon, 16 Jan 2006 14:27:24 -0800
+
+buici-clock (0.4.2) unstable; urgency=low
+
+  * Upload to upgrade to new gcc compiler. 
+
+ -- Marc Singer <elf@buici.com>  Wed, 20 Aug 2003 21:52:54 -0700
+
+buici-clock (0.4.1) unstable; urgency=low
+
+  * Reordered dependencies to make xlibs-dev the default xlibs library.
+    (closes: #170242)
+  * Configuring explicitly in the current directory.
+  * Applied suggested patch to xo/Makefile.in.  (closes: #141442)
+
+ -- Marc Singer <elf@buici.com>  Wed, 12 Feb 2003 10:05:10 -0800
+
+buici-clock (0.4.0) unstable; urgency=low
+
+  * Checks every hour for the timezone offset.  We'll know in the spring
+    if it tracks DST changes properly. (closes: #117353)
+  * Rolled revision because of the previous, bona-fide bug fix.
+
+ -- Marc Singer <elf@buici.com>  Tue, 30 Oct 2001 20:52:29 -0800
+
+buici-clock (0.3.15) unstable; urgency=low
+
+  * Lintian changes.  Man page in the right place, correct install
+    scripts.  Using all debhelper commands.  Lintian is now happy. 
+
+ -- Marc Singer <elf@buici.com>  Thu, 06 Sep 2001 02:22:00 -0000
+
+buici-clock (0.3.14) unstable; urgency=low
+
+  * Dropped xbase-clients from build-depends.  
+
+ -- Marc Singer <elf@buici.com>  Mon, 23 Jul 2001 01:11:00 -0000
+
+buici-clock (0.3.13) unstable; urgency=low
+
+  * Added more entries to the build-depends.  
+  * Incremented version number twice to avoid conflict with the NMU.
+
+ -- Marc Singer <elf@buici.com>  Sun, 22 Jul 2001 19:27:00 -0000
+
+buici-clock (0.3.11) unstable; urgency=low
+
+  * Changed the prerelease rule to correctly set file permissions.  
+
+ -- Marc Singer <elf@buici.com>  Mon,  9 Apr 2001 22:09:59 -0700
+
+buici-clock (0.3.10) testing unstable; urgency=low
+
+  * Changed autoconf WRT time.h and sys/time.h.  This makes it build in
+    potato and woody, bug #92346.
+
+ -- Marc Singer <elf@buici.com>  Sat, 31 Mar 2001 13:20:39 -0800
+
+buici-clock (0.3.9) testing unstable; urgency=low
+
+  * Added build-depends for X libraries, but it doesn't work.  Hmm.  
+  * Moved doc and man to share, bug #91398.
+  
+ -- Marc Singer <elf@buici.com>  Mon, 26 Mar 2001 16:32:33 -0800
+
+buici-clock (0.3.8) frozen unstable; urgency=low
+
+  * This patches the clock so it can be shipped with the now frozen
+    potato. 
+  * Fixed a contravariance violation related to const.
+  * Rebuild to link with libstdc++2.9 for potato.
+
+ -- Oscar Levi <elf@buici.com>  Wed, 12 Jan 2000 15:01:57 -0800
+
+buici-clock (0.3.7) frozen; urgency=low
+
+  * Patched clock.cxx to fix a core dump (on non-Debian systems) that
+    appears to be related to the resource management.
+  * Rebuilt to fix the erroneous dependency on libstdc++2.8.
+
+ -- Marc Singer <elf@netcom.com>  Tue, 17 Nov 1998 17:06:53 -0800
+
+buici-clock (0.3.6) unstable; urgency=low
+
+  * First debianized version of buici-clock.
+
+ -- Marc Singer <elf@netcom.com>  Wed, 21 Oct 1998 15:35:51 -0700
+
+

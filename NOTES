@@ -1,0 +1,74 @@
+  ===========
+  Buici NOTES	$Id: NOTES,v 1.3 1997/10/15 22:33:28 elf Exp $
+  ===========
+
+  by Marc Singer, elf@netcom.com
+  12 October 1997 (date of last revision)
+
+  Why write another clock program?  Have you looked at the published
+  ones?  At the time I started on this track, the best one I found
+  doesn't draw a round face.  A clock must
+
+   1) Draw a correct representation of the clock face
+   2) Support configurable clock face elements
+   3) Respond to some sort of mousing request to display today's date
+
+  Nothing came close, so I wrote Buici.  The rest of this document
+  describes some of the interesting design issues and notes about
+  enhancements.
+
+  - Fetching the current time
+    I'm using gettimeofday () which returns the seconds since
+    midnight, January 1, 1970, do the timezone and daylight savings
+    corrections, and use this number of seconds to position the clock
+    hands.  I need to figure out how to do daylight savings
+    corrections for non-US zones.  I could use another call that
+    already does the conversion, but this may add some calculation
+    that I can omit if I do the math myself.
+
+  - Rendering timer
+    We set an interval timer to interrupt us every 100ms, or so.  At
+    this point we fetch the current value for seconds and decide if
+    the time has changed.  If so we draw into the m_pixmap and copy it
+    to the screen.
+
+  - Exposure
+    Since we draw to the screen when the timer alarm fires we need to
+    be concerned about race conditions.  The simple solution is to set
+    a flag when we receive an exposure and check this when we next
+    receive a timer alarm.  Thus, we draw the clock face when it
+    changes or when we are exposed.
+
+  - SIN COS and correct face representation
+    The rendering routine uses floating point math to locate the
+    positions of the clock face elements.  I spent a few hours trying
+    to make everything look good, but found that the hands were not
+    always pointing straight at the hour marks.  All of the default
+    hands are longer than face radius, extending away from the mark
+    that the hand indicates.  For some reason not yet understood, the
+    angle of this short line segment is not the same as the segment
+    extending toward the mark.  We solved the display problem by
+    drawing lines that cross the face center in two pieces.
+    
+  - Efficiency
+    There is something very inefficient about the drawing.  For some
+    reason the NCD pauses a lot when we use the Buici clock.  I'm
+    thinking we either need to batch the strokes, use more backing
+    storage for the fixed face elements, or check that we are updating
+    only once a second.
+    * This has been resolved.  On the NCD, the problem appears to be
+      drawing.  Batching the line segments into a fewer number of
+      requests did not affect the clock performance.  Using a backing
+      pixmap for the clock marks does help.  We note that this
+      requires that the server has memory for the backing pixmap.
+      Should the clock be very large, the backing pixmap may be
+      excessively large.
+    * We need to evaluate the drawing performance of other servers.
+      It may be OK to fallback to drawing marks every second because
+      more contemporary servers are more efficient.
+    * An alternative solution to the size of the backing store is to
+      use color mapped bitmaps for marks and BLT them by color instead
+      of using XCopyArea.  As long as we have fewer than depth layers,
+      the extra work may be justified.
+
+    

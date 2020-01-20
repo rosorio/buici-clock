@@ -1,0 +1,69 @@
+- Since we cannot use the createwindowevent (it is sent to the Parent,
+  and not to us) we need to make a special call after creating a
+  window with the create window information.  The important part is
+  the window dimension.  Or!  We could simply store this info in the
+  LWindow structure.
+- Need an encapsulation of resource manager.  Can be VERY simple
+  subclass of LDisplay. 
+- Need an encapsulation of fonts.  I think we should ask for fonts
+  from a third party which will cache fontname->fontID mappings.  It
+  will return fast an ID if one has been requested already.  Also, it
+  will not free any fonts until the application quits.  We don't have
+  to do this because the server will do a quick return when the font
+  has been referenced by another application.  Still, it is
+  advantageous to eliminate any round-trip-times from the application
+  that are easy to circumvent.
+- Need to think about implementing full button functionality.  How
+  does a button event get reported?  It would be nice if we could
+  specify a simple mechanism for events to propagate.  Thus, we could
+  have containers inside dialogs, but the events still go to the
+  dialog.  Or, the container could request a chance to filter
+  notification events.
+- Need to think about minimum dialog template features.  How to
+  specify the dialog, and how to store this in a binary.  Can we do
+  some clever trick to implement a resource in a binary file?  We
+  could link a symbol?  We could execute a simple resource compiler.
+  Whoa.  This will be very cool.
+  It would also be nice to be able to specify both dialog units,
+  relative to the default dialog font, and pixels for controls that
+  need to reference exact bitmap sizes and such.
+- Need to focus on inter-window messaging.  Look at how a child
+  notifies the parent about a state change.  There is the event ID as
+  accepted by the parent, I think it is best to use a client message.
+  Then there is the window ID so we can know what happened.  Then,
+  there is the event we are trying to notify ABOUT.  Click, change,
+  etc.  Now, we could use a class interface for notification and
+  circumvent the message map.  This has the advantage of obviating the
+  need for atoms and the like, and it makes it easier to cope with
+  the structures we may want to pass.  The down side is that it is a
+  'somewhat' parallel messaging mechanism.  This, the parent need to
+  have a place to call into.  I'm heasitant to start using virtual
+  call tables since these have crummy extensibility characteristics.
+  So instead, we could use the event dispatch table, define some
+  high-numbered event numbers, and use our 'event' structure.  Hmm.
+  I'm pretty shy of using the C++ class structuring mechanisms.  Can
+  you tell?
+- In extracting from dialog templates, it would be good to have a
+  couple of helper functions for the simpler cases, origin, extent,
+  title, that return the arguments if the object is defined.
+- Need to implement dialog specific resources so we can compute the
+  text cell size used in scaling.
+- Also, we need to make sure children notify the right parent on
+  dialog creation.
+- Also, it would be good to allow preprocessing of dialog templates
+  st. we can do simple math and some string concatenation.
+- Also, we want to fogure out how to prevent the window manager from
+  controlling window placement of these dialogs.
+- Also, can we prevent a window from being resized?
+- Compiler bug?
+  It is possible we have found a compiler error.  If we have a method
+  declared in a base class as well as a derived class, and if the
+  arguments for these functions are different, a call to this method
+  using an object pointer SHOULD find the base class method by
+  matching the argument types.  Right?
+- What is the goal here?
+  It looks like the goal of XO is to provide an efficient library for
+  interfacing to a graphical display.  I'm finding that a primary
+  motivating factor is the desire to visualize numerical data.  This
+  is turning out to be like Razor except that *I* want use the tool
+  myself.

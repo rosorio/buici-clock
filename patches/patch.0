@@ -1,0 +1,68 @@
+From julian@cesta.com  Sun Oct 19 00:52:20 1997
+Return-Path: <julian@cesta.com>
+Received: from gemini.cesta.com (gemini.cesta.com [206.127.255.218])
+	by mail3.netcom.com (8.8.5-r-beta/8.8.5/(NETCOM v1.01)) with ESMTP id AAA29311
+	for <elf@netcom.com>; Sun, 19 Oct 1997 00:52:19 -0700 (PDT)
+Received: from localhost (julian@localhost)
+	by gemini.cesta.com (8.8.5/8.8.5) with SMTP id VAA01485
+	for <elf@netcom.com>; Sat, 18 Oct 1997 21:48:55 -1000
+X-Authentication-Warning: gemini.cesta.com: julian owned process doing -bs
+Date: Sat, 18 Oct 1997 21:48:53 -1000 (HST)
+From: Julian Cowley <julian@cesta.com>
+Reply-To: Julian Cowley <julian@cesta.com>
+To: Marc Singer <elf@netcom.com>
+Subject: buici clock diffs
+Message-ID: <Pine.LNX.3.95.971018195852.1149A-100000@gemini.cesta.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Status: RO
+
+Hi Marc,
+
+Just tried your buici clock.  Very nice!  I have a couple of requests and
+a fix for a small bug.
+
+First, feature requests :)
+
+* option to leave out seconds hand
+
+* the -geometry option didn't seem to work right with regards to screen
+  placement.  I.e., using something like -geometry -0+0 still placed the
+  clock in the upper-left hand corner. 
+
+Now, a bug fix.  I live in Hawaii, where we don't use daylight savings
+time (as opposed to most of the US).  When I first tried the program, the
+clock was one hour ahead of local time.  I tracked the error to
+gettimeofday() and the time zone data it reports.  The zoneinfo library is
+better, as it handles exceptions such as Hawaii.
+
+A small note about the patch.  localtime() sets two global variables,
+timezone and daylight.  Originally, I used daylight to determine if
+daylight savings time is in effect, but it acts the same way as
+gettimeofday().  I solved this by using tm_isdst instead. 
+
+ps. QOTD.  What does Buici mean? 
+
+--- clock..cxx.orig	Fri Oct 17 18:20:27 1997
++++ clock.cxx	Sat Oct 18 20:01:43 1997
+@@ -373,13 +373,12 @@
+ {
+ 				// -- Check time
+   struct timeval tv;
+-  struct timezone tz;
++  struct tm *tm;
+   memset (&tv, 0, sizeof (tv));
+-  memset (&tz, 0, sizeof (tz));
+-  gettimeofday (&tv, &tz);
+-  time_t seconds = tv.tv_sec - tz.tz_minuteswest*60;
+-  if (tz.tz_dsttime == DST_USA)
+-    seconds += 3600;
++  gettimeofday (&tv, 0);
++  time_t seconds = tv.tv_sec;
++  tm = localtime (&seconds);	// -- Also sets timezone global variable
++  seconds = seconds - timezone + (tm->tm_isdst ? 3600 : 0);
+   if (seconds == m_seconds)
+     return false;
+   m_seconds = seconds;
+
+
