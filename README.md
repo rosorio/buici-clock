@@ -6,5 +6,6 @@ originally wrote by Marc Singer : https://launchpad.net/ubuntu/+source/buici-clo
 Improvements:
 
  * Add timezone switch to display a specific country time (-tz)
+ * when tz is speccified, use the text as label (replace 'Buici')
 
 ![Screenshot](buici-clock.png)
