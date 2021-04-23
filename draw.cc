@@ -36,6 +36,8 @@
 #define WIDTH_HAND (WIDTH_THICK*0.8)
 #define FONT "serif"
 
+extern char* g_szTimeZone;
+
 void draw (void)
 {
   cairo_surface_t* s = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
@@ -262,7 +264,7 @@ void draw_dial (Display* display, Visual* visual,
 
 	// -- Draw brand
   {
-    const char* sz = "Buici";
+    const char* sz = g_szTimeZone ? g_szTimeZone : "Buici";
     cairo_save (cr);
     cairo_select_font_face (cr, FONT,
 			    CAIRO_FONT_SLANT_ITALIC,
