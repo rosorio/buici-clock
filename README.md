@@ -7,3 +7,4 @@ Improvements:
 
  * Add timezone switch to display a specific country time (-tz)
 
+![Screenshot](buici-clock.png)
