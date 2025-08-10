@@ -107,7 +107,8 @@ time_t calc_delta (time_t);
 void draw_dial (Display* display, Visual* visual,
 		Pixmap pixmap, int dx, int dy);
 void draw_hands (Display* display, Visual* visual,
-		Pixmap pixmap, int dx, int dy, int seconds);
+		Pixmap pixmap, int dx, int dy, int seconds,
+		bool showSecondHand);
 void draw_dial_shape (Display* display, Pixmap pixmap, int dx, int dy);
 
 class WTopLevel : public LWindow {
@@ -539,7 +540,7 @@ bool WTopLevel::render (void)
 	     _gc, 0, 0, width (), height (), 0, 0);
 
 
-  draw_hands (xdisplay (), xvisual (), pixmap, width (), height (), seconds);
+  draw_hands (xdisplay (), xvisual (), pixmap, width (), height (), seconds, m_fSecondHand);
 
 #if 0
 				// -- Draw hands
