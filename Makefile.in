@@ -161,7 +161,7 @@ $(O_D)$(TARGET): $(OBJ) $(XO_PATH)/libxo.a
 
 $(TARGET): $(O_D)$(TARGET)
 	@echo -- Linking $(TARGET) to $(O_D)$(TARGET)
-	@ln -s $(O_D)$(TARGET) .
+	@ln -sf $(O_D)$(TARGET) .
 
 #install:
 #	cp $(TARGET).exe c:/usr/local
