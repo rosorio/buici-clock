@@ -104,7 +104,6 @@ $(O_D)%.o: %.s
 
 %.cxx: %.y
 	$(YACC) -d -o $@ $<
-	mv $(basename $@).hxx $(basename $@).h
 
 %.i: %.cxx
 	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -E -o $(notdir $@) $<
@@ -162,7 +161,7 @@ distclean: clean
 	-rm Makefile config.h $(DEPEND)
 	-rm config.cache config.status config.log
 	-rm _version.h .version
-	-rm res_y.h res_l.cxx res_y.cxx
+	-rm res_y.hxx res_l.cxx res_y.cxx
 	-rm libxo.a
 
 res_l.l: res.h

@@ -33,7 +33,7 @@
 #include "standard.h"
 #define IS_PARSER
 #include "lres.h"
-#include "res_y.h"
+#include "res_y.hxx"
 #include <limits.h>
 
 #if defined (__cplusplus)
