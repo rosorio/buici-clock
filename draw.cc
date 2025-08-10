@@ -145,7 +145,8 @@ void draw (void)
 
 
 void draw_hands (Display* display, Visual* visual,
-		 Pixmap pixmap, int dx, int dy, int seconds)
+		 Pixmap pixmap, int dx, int dy, int seconds,
+		 bool showSecondHand)
 {
   cairo_surface_t* s = cairo_xlib_surface_create (display, pixmap, visual,
 						  dx, dy);
@@ -198,16 +199,18 @@ void draw_hands (Display* display, Visual* visual,
     cairo_path_destroy (path);
 
 	// Second hand
-    cairo_save (cr);
-    cairo_rotate (cr, ((2.0*M_PI)*seconds)/60.0);
-    cairo_set_line_width (cr, WIDTH_THIN);
-    cairo_move_to (cr, 0,  (DY/2.0)*0.20);
-    cairo_line_to (cr, 0, -(DY/2.0)*0.64);
-    cairo_set_source_rgb (cr, 1.0, 0, 0);
-    cairo_stroke (cr);
-    cairo_arc (cr, 0, -(DY/2.0)*0.64, DX*0.03, 0, 2*M_PI);
-    cairo_fill (cr);
-    cairo_restore (cr);
+    if (showSecondHand){
+        cairo_save (cr);
+        cairo_rotate (cr, ((2.0*M_PI)*seconds)/60.0);
+        cairo_set_line_width (cr, WIDTH_THIN);
+        cairo_move_to (cr, 0,  (DY/2.0)*0.20);
+        cairo_line_to (cr, 0, -(DY/2.0)*0.64);
+        cairo_set_source_rgb (cr, 1.0, 0, 0);
+        cairo_stroke (cr);
+        cairo_arc (cr, 0, -(DY/2.0)*0.64, DX*0.03, 0, 2*M_PI);
+        cairo_fill (cr);
+        cairo_restore (cr);
+    }
   }
 
   cairo_destroy (cr);
