@@ -56,7 +56,7 @@ OBJ_LIB=$(_OBJ_LIB:.y=.o)
 VERSION_HEADER=version.h
 
 CC=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXXFLAGS=@CPPFLAGS@ @CXXFLAGS@
 #CXXFLAGS=-${CXXFLAGS} -O
 #CXXFLAGS=-${CXXFLAGS} -O2
 #CXXFLAGS=-${CXXFLAGS} -fomit-frame-pointer
@@ -76,6 +76,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 infodir = @infodir@
 mandir = @mandir@
+datarootdir = @datarootdir@
 
 #
 # --- Implicit rules

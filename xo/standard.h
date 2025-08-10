@@ -37,11 +37,9 @@
 
 #include "config.h"		// autoconf configuration header
 
-#if defined (STDC_HEADERS)
-# include <stdio.h>
-# include <stdlib.h>
-# include <stdarg.h>
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #if defined (HAVE_UNISTD_H)
 # include <unistd.h>
 #endif
