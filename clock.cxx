@@ -71,7 +71,6 @@
 #include "ldisplay.h"
 #include "lwindow.h"
 #include "lres.h"
-#include "signal.h"		// Our signal wrapper
 
 #include "buici.xbm"		// Our name as a bitmap
 
@@ -100,7 +99,6 @@ extern int g_fOverrideRedirect;
 extern int g_showSecondHand;
 
 int do_clock (void);
-void signal_alarm (LSignalHandle handle, void* pv);
 int x_after (Display*);
 time_t calc_delta (time_t);
 
@@ -806,22 +804,6 @@ void WTopLevel::render_line (GC gc, Pixmap pixmap, double theta,
 }
 
 
-void WTopLevel::setup_time (void)
-{
-				// -- Configure interval timer
-  LSignal::accept (SIGALRM, signal_alarm, (void*) this, 0, 0);
-  {
-    struct itimerval value;
-    memset (&value, 0, sizeof (value));
-    value.it_interval.tv_sec = 0;
-    value.it_interval.tv_usec = 100000;
-    value.it_value.tv_usec = 1;
-    //      value.it_value = value.it_interval;
-    setitimer (ITIMER_REAL, &value, NULL);
-  }
-}
-
-
 void WTopLevel::shape (void)
 {
   int i;
@@ -941,7 +923,6 @@ int do_clock (void)
 
     pWindow->allocate_colors ();		// First, create the colormap
 
-    pWindow->setup_time ();
     pWindow->render ();
     pWindow->map ();
 
@@ -950,7 +931,11 @@ int do_clock (void)
     //    fprintf (stderr, "starting dispatch\n");
 
     while (!g_fQuit) {
-      display.dispatch_next_event ();
+      display.dispatch_next_event_timeout (100000);
+      if (pWindow->render () || pWindow->is_expose ()) {
+        pWindow->draw ();
+        pWindow->display ()->flush ();
+      }
     }
 
     fprintf (stderr, "exiting\n");
@@ -963,15 +948,4 @@ int do_clock (void)
 //  dmalloc_exit ();		// See what is left allocated
 
   return 0;
-}
-
-void signal_alarm (LSignalHandle /* handle */, void* pv)
-{
-  //  fprintf (stderr, "tick\n");
-  WTopLevel* pWindow = (WTopLevel*) pv;
-  if (pWindow->render () || pWindow->is_expose ()) {
-    pWindow->draw ();
-    pWindow->display ()->flush ();
-  }
-  //  fprintf (stderr, "tock\n");
 }

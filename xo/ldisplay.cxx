@@ -34,6 +34,9 @@
 #include "ldisplay.h"
 #include "lwindow.h"
 
+#include <sys/select.h>
+#include <sys/time.h>
+
 unsigned long LDisplay::color_distance (XColor& color, XColor& colorMatch)
 {
   unsigned long sh = 16 - m_pVisual->bits_per_rgb;
@@ -58,8 +61,14 @@ void LDisplay::dispatch (XEvent* pEvent)
 
 void LDisplay::dispatch_next_event (void)
 {
+  dispatch_next_event_timeout (-1);
+}
+
+void LDisplay::dispatch_next_event_timeout (long usec)
+{
   XEvent event;
-  next_event (&event);
+  if (!next_event_timeout (&event, usec))
+    return;
 
 				// Update keyboard mapping
   if (event.type == MappingKeyboard) {
@@ -83,6 +92,35 @@ LWindow* LDisplay::find_child (int id)
   return m_pWindowRoot ? m_pWindowRoot->find_sibling (id) : (LWindow*) NULL;
 }
 
+bool LDisplay::next_event_timeout (XEvent* pEvent, long usec)
+{
+  fd_set fds;
+  int r, fd;
+  struct timeval tv;
+
+  if (!m_pDisplay)
+    return false;
+
+  if (usec < 0 || XPending (m_pDisplay)) {
+    XNextEvent (m_pDisplay, pEvent);
+    return true;
+  }
+
+  fd = ConnectionNumber (m_pDisplay);
+  FD_ZERO (&fds);
+  FD_SET (fd, &fds);
+  tv.tv_sec = 0;
+  tv.tv_usec = usec;
+
+  r = select (fd + 1, &fds, NULL, NULL, &tv);
+
+  if (r > 0 && XPending (m_pDisplay)) {
+    XNextEvent (m_pDisplay, pEvent);
+    return true;
+  }
+
+  return false;
+}
 
 bool LDisplay::open (char* szDisplay)
 {
