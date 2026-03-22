@@ -111,6 +111,7 @@ public:
 
   unsigned long color_distance (XColor& color, XColor& colorMatch);
   void dispatch_next_event (void);
+  void dispatch_next_event_timeout (long usec);
   void dispatch (XEvent* pEvent);
   Colormap colormap (void) {
     return m_colormap; }
@@ -151,6 +152,7 @@ public:
   bool hash_template (const char* szTemplate, LWindow* pWindow);
   void next_event (XEvent* pEvent) {
     m_pDisplay ? XNextEvent (m_pDisplay, pEvent) : 0; }
+  bool next_event_timeout (XEvent* pEvent, long usec);
   bool open (char* szDisplay = NULL);
   void unhash_window (LWindow* pWindow);
 
