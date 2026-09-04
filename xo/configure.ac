@@ -1,15 +1,15 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION([$Id: configure.in,v 1.5 2000/01/13 07:04:46 elf Exp $])
-AC_PREREQ(2.12)dnl              dnl Minimum Autoconf version required.
-AC_INIT(ldisplay.cxx)		dnl Name of unique file that must exist
+AC_PREREQ([2.71])dnl              dnl Minimum Autoconf version required.
+AC_INIT
+AC_CONFIG_SRCDIR([ldisplay.cxx])  dnl Name of unique file that must exist
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
-AC_LANG_CPLUSPLUS		dnl Default to c++ cause that what we done.
+AC_LANG([C++])                    dnl Default to c++ cause that what we done.
 
 dnl Checks for programs.
 AC_PROG_YACC
-AC_PROG_LEX
+AC_PROG_LEX([noyywrap])
 AC_PROG_CXX
 AC_PROG_LN_S
 
@@ -20,8 +20,6 @@ fi
 
 dnl Checks for header files.
 AC_PATH_XTRA
-AC_HEADER_STDC
-AC_CHECK_FUNCS(memset strncmp)
 AC_CHECK_HEADERS(memory.h fcntl.h limits.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -30,7 +28,6 @@ dnl AC_C_CONST
 dnl -- Removed because it tends to interfere with headers
 dnl AC_C_INLINE
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 dnl Checks for library functions.
 dnl AC_FUNC_MMAP
@@ -38,7 +35,8 @@ dnl AC_FUNC_VPRINTF				dnl -- We use vsprintf
 
 
 AC_SUBST(CFLAGS_W)
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
 
 dnl -- Prevent accidental edits.  
 chmod -w Makefile

@@ -57,15 +57,15 @@ RELEASE_PATH=${HOME}/release
 
 XO_PATH=@XO_PATH@
 CC=@CXX@
-CFLAGS_I=-I${XO_PATH} `pkg-config --cflags cairo`
-CXXFLAGS=@CXXFLAGS@
+CFLAGS_I=-I${XO_PATH} @CAIRO_CFLAGS@
+CXXFLAGS=@CPPFLAGS@ @CXXFLAGS@
 #CXXFLAGS=$(CXXFLAGS) -O
 #CXXFLAGS=$(CXXFLAGS) -O2
 #CXXFLAGS=$(CXXFLAGS) -fomit-frame-pointer
 #CXXFLAGS=$(CXXFLAGS) -pg
 
 CXXFLAGS_=-g $(CFLAGS_I)@CFLAGS_W@@X_CFLAGS@
-LFLAGS=-g @LDFLAGS@@X_LIBS@ -L${XO_PATH} @LIBS@ -lxo -lX11 -lXext@X_EXTRA_LIBS@ `pkg-config --libs cairo`
+LFLAGS=-g @LDFLAGS@@X_LIBS@ -L${XO_PATH} @LIBS@ -lxo -lX11 -lXext@X_EXTRA_LIBS@ @CAIRO_LIBS@
 #LFLAGS=-pg ${LFLAGS}
 DEPEND=depend.m
 ECHO=@/bin/echo
@@ -99,33 +99,27 @@ mandir = $(prefix)/share/man
 
 vpath %.o $(O_D)
 
-%.o: %.cc
-	$(make_o)
+%.o: %.cc | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
 
-%.o: %.cxx
-	$(make_o)
+%.o: %.cxx | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
 
-$(O_D)%.o: %.cxx
-	$(make_o)
+$(O_D)%.o: %.cxx | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
 
-$(O_D)%.o: %.cc
-	$(make_o)
+$(O_D)%.o: %.cc | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
 
-%.o: %.s
-	$(make_o)
+%.o: %.s | make_o
 	$(ECHO) $(AS) $(AFLAGS) -o $(O_D)$@ $<
 	@$(AS) $(AFLAGS) $(AFLAGS_) -o $(O_D)$@ $<
 
-$(O_D)%.o: %.s
-	$(make_o)
+$(O_D)%.o: %.s | make_o
 	$(ECHO) $(AS) $(AFLAGS) -o $@ $<
 	@$(AS) $(AFLAGS) $(AFLAGS_) -o $@ $<
 
@@ -155,16 +149,19 @@ make_o:
 	@if test ! -e $(O_D) ;\
 	 then echo === Creating \'$(O_D)\' output directory ; mkdir $(O_D) ; fi
 
+.PHONY: xolib
 xolib:
 	@if test ! "${XO_PATH}" = "../xo" ; \
 	 then (cd ${XO_PATH} ; [ -f config.log ] || ./configure ; $(MAKE) all) ; fi
+
+$(XO_PATH)/libxo.a: xolib
 
 $(O_D)$(TARGET): $(OBJ) $(XO_PATH)/libxo.a
 	$(CC) -o $@ $(addprefix $(O_D),$(OBJ)) $(LFLAGS)
 
 $(TARGET): $(O_D)$(TARGET)
 	@echo -- Linking $(TARGET) to $(O_D)$(TARGET)
-	@ln -s $(O_D)$(TARGET) .
+	@ln -sf $(O_D)$(TARGET) .
 
 #install:
 #	cp $(TARGET).exe c:/usr/local
@@ -196,6 +193,8 @@ distclean dist_clean: clean
 #
 # --- Version and Build Engineering
 #
+
+version.cxx: _version.h
 
 .version: .version_major .version_minor .version_patch
 	@/bin/echo -n `cat .version_major`.`cat .version_minor`.`cat \
