@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION([$Id: configure.in,v 1.16 2001/03/31 21:18:12 elf Exp $])
-AC_PREREQ(2.12)dnl              dnl Minimum Autoconf version required.
-AC_INIT(buici.xbm)		dnl Name of unique file that must exist
+AC_PREREQ([2.71])dnl              dnl Minimum Autoconf version required.
+AC_INIT
+AC_CONFIG_SRCDIR([buici.xbm])     dnl Name of unique file that must exist
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
-AC_LANG_CPLUSPLUS		dnl Default to c++ cause that what we done.
+AC_LANG([C++])                    dnl Default to c++ cause that what we done.
 
 dnl Checks for programs.
 dnl AC_PROG_CC
@@ -33,10 +33,8 @@ AC_CHECK_LIB(m, cos)
 dnl Checks for header files.
 dnl AC_HEADER_DIRENT
 AC_PATH_XTRA
-AC_HEADER_STDC
-AC_CHECK_FUNCS(memset strncmp)
-dnl AC_CHECK_HEADERS(fcntl.h ncurses/curses.h ncurses.h curses.h gpm.h)
-AC_CHECK_HEADERS(unistd.h)
+
+AC_CHECK_HEADERS([unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl -- Removed because it tends to interfere with headers
@@ -44,11 +42,8 @@ dnl AC_C_CONST
 dnl -- Removed because it tends to interfere with headers
 dnl AC_C_INLINE
 dnl AC_TYPE_OFF_T
-AC_TYPE_TIME_T
-AC_HEADER_TIME
-dnl AC_TYPE_UMODE_T
-AC_STRUCT_TM
-AC_STRUCT_TIMEZONE
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 dnl AC_CHECK_SIZEOF(long, 4)			dnl -- Make sure to warn user
 dnl AC_CHECK_SIZEOF(int, 4)			dnl --   about these defaults.
 
@@ -57,10 +52,12 @@ dnl AC_FUNC_MMAP
 dnl AC_FUNC_VPRINTF				dnl -- We use vsprintf
 dnl AC_CHECK_FUNCS(mktime stime strftime)	dnl -- Include in the source
 
+PKG_CHECK_MODULES([CAIRO],[cairo])
 
 AC_SUBST(XO_PATH)
 AC_SUBST(CFLAGS_W)
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
 
 dnl -- Prevent accidental edits.  
 chmod -w Makefile
@@ -72,7 +69,7 @@ if test ! -f depend.m ; then touch depend.m ; fi
 dnl -- Configure XO, too, if it is local
 if test ! "${XO_PATH}" = "../xo" ; then
  if test ! -e ${XO_PATH}/config.cache ; then cp config.cache ${XO_PATH} ; fi
- (cd ${XO_PATH} ; ./configure ) 
+ (cd ${XO_PATH} ; ./configure --build=$build_alias --host=$host_alias )
 fi
 
 dnl -- Check for missing RESOURCE_MANAGER string

@@ -56,7 +56,7 @@ OBJ_LIB=$(_OBJ_LIB:.y=.o)
 VERSION_HEADER=version.h
 
 CC=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXXFLAGS=@CPPFLAGS@ @CXXFLAGS@
 #CXXFLAGS=-${CXXFLAGS} -O
 #CXXFLAGS=-${CXXFLAGS} -O2
 #CXXFLAGS=-${CXXFLAGS} -fomit-frame-pointer
@@ -76,6 +76,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 infodir = @infodir@
 mandir = @mandir@
+datarootdir = @datarootdir@
 
 #
 # --- Implicit rules
@@ -83,19 +84,19 @@ mandir = @mandir@
 
 vpath %.o $(O_D)
 
-%.o: %.cxx
+%.o: %.cxx | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $(O_D)$@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $(O_D)$@ $<
 
-$(O_D)%.o: %.cxx
+$(O_D)%.o: %.cxx | make_o
 	$(ECHO) $(CC) -c $(CXXFLAGS) -o $@ $<
 	@$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -o $@ $<
 
-%.o: %.s
+%.o: %.s | make_o
 	$(ECHO) $(AS) $(AFLAGS) -o $(O_D)$@ $<
 	@$(AS) $(AFLAGS) $(AFLAGS_) -o $(O_D)$@ $<
 
-$(O_D)%.o: %.s
+$(O_D)%.o: %.s | make_o
 	$(ECHO) $(AS) $(AFLAGS) -o $@ $<
 	@$(AS) $(AFLAGS) $(AFLAGS_) -o $@ $<
 
@@ -104,7 +105,6 @@ $(O_D)%.o: %.s
 
 %.cxx: %.y
 	$(YACC) -d -o $@ $<
-	mv $(basename $@).hxx $(basename $@).h
 
 %.i: %.cxx
 	$(CC) -c $(CXXFLAGS) $(CXXFLAGS_) -E -o $(notdir $@) $<
@@ -128,8 +128,9 @@ make_o:
 
 res_l.cxx: res_l.l
 res_y.cxx: res_y.y
+res_y.hxx: res_y.cxx
 
-$(O_D)res.o: lres.h
+$(O_D)res.o: lres.h res_y.hxx
 
 res: o/res_y.o o/res_l.o o/res.o
 	$(CC) $(LFLAGS) -o $@ $^
@@ -162,7 +163,7 @@ distclean: clean
 	-rm Makefile config.h $(DEPEND)
 	-rm config.cache config.status config.log
 	-rm _version.h .version
-	-rm res_y.h res_l.cxx res_y.cxx
+	-rm res_y.hxx res_l.cxx res_y.cxx
 	-rm libxo.a
 
 res_l.l: res.h
